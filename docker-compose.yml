@@ -7,7 +7,7 @@ services:
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus_data:/prometheus
-    comand:
+    command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
@@ -28,21 +28,21 @@ services:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
       - /:/rootfs:ro
-    comand:
+    command:
       - '--path.procfs=/host/proc'
       - '--path.rootfs=/rootfs'
-      - '-path.sysfs=/host/sys'
-      - '--collector.filesystem.mount-points-exclude=^/(sys|pros|dev|host|etc)($$|/)'
-      ports:
-        - "9100:9100"
-      networks:
-        - monitoring-net
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "9100:9100"
+    networks:
+      - monitoring-net
 
   grafana:
     image: grafana/grafana-enterprise:latest
     container_name: grafana
     restart: unless-stopped
-    enviroment:
+    environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
     volumes:
       - grafana_data:/var/lib/grafana
@@ -53,9 +53,9 @@ services:
     depends_on:
       - prometheus
 
-  volumes:
-    prometheus_data:
-    grafana_data:
+volumes:
+  prometheus_data:
+  grafana_data:
 
-  networks:
-    monitoring-net:
+networks:
+  monitoring-net:
